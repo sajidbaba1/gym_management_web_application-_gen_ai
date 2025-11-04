@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" class="fithub-logo">
+  <defs>
+    <!-- Gradient for the icon -->
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Gradient for the text -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.1)"/>
+    </filter>
+  </defs>
+  
+  <!-- Logo Icon - Modern Dumbbell -->
+  <g transform="translate(10, 10)">
+    <!-- Main bar -->
+    <rect x="12" y="18" width="16" height="4" rx="2" fill="url(#iconGradient)" filter="url(#shadow)"/>
+    
+    <!-- Left weight -->
+    <circle cx="8" cy="20" r="8" fill="url(#iconGradient)" filter="url(#shadow)"/>
+    <circle cx="8" cy="20" r="5" fill="rgba(255,255,255,0.2)"/>
+    
+    <!-- Right weight -->
+    <circle cx="32" cy="20" r="8" fill="url(#iconGradient)" filter="url(#shadow)"/>
+    <circle cx="32" cy="20" r="5" fill="rgba(255,255,255,0.2)"/>
+    
+    <!-- Connecting elements -->
+    <rect x="10" y="19" width="4" height="2" rx="1" fill="url(#iconGradient)"/>
+    <rect x="26" y="19" width="4" height="2" rx="1" fill="url(#iconGradient)"/>
+    
+    <!-- Highlight effects -->
+    <ellipse cx="6" cy="16" rx="2" ry="1" fill="rgba(255,255,255,0.4)"/>
+    <ellipse cx="30" cy="16" rx="2" ry="1" fill="rgba(255,255,255,0.4)"/>
+  </g>
+  
+  <!-- FitHub Text -->
+  <g transform="translate(60, 15)">
+    <!-- "Fit" part -->
+    <text x="0" y="20" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-size="24" font-weight="800" fill="url(#textGradient)" filter="url(#shadow)">
+      Fit
+    </text>
+    
+    <!-- "Hub" part -->
+    <text x="35" y="20" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-size="24" font-weight="800" fill="url(#textGradient)" filter="url(#shadow)">
+      Hub
+    </text>
+    
+    <!-- Tagline -->
+    <text x="0" y="35" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+          font-size="8" font-weight="500" fill="#6b7280" opacity="0.8">
+      PREMIUM GYM MANAGEMENT
+    </text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <g opacity="0.6">
+    <!-- Small dots pattern -->
+    <circle cx="170" cy="15" r="1.5" fill="#3b82f6" opacity="0.3"/>
+    <circle cx="175" cy="18" r="1" fill="#2563eb" opacity="0.4"/>
+    <circle cx="180" cy="12" r="1.2" fill="#8b5cf6" opacity="0.3"/>
+    
+    <!-- Motion lines -->
+    <path d="M165 25 L185 25" stroke="#3b82f6" stroke-width="1" opacity="0.2"/>
+    <path d="M167 28 L183 28" stroke="#2563eb" stroke-width="0.8" opacity="0.3"/>
+  </g>
+</svg>

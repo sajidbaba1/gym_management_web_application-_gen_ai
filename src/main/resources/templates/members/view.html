@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Member Details</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transition: all 0.3s ease; }
+        .btn-primary:hover { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                    <img src="/images/fithub-icon.svg" alt="FitHub" class="w-10 h-10">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">FitHub</span>
+                        <span class="text-xs text-gray-500 font-medium -mt-1">Premium Gym</span>
+                    </div>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Home</a>
+                    <a href="/members" class="text-blue-600 dark:text-blue-400 font-semibold">Members</a>
+                    <a href="/trainers" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Trainers</a>
+                    <a href="/classes" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Classes</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="darkModeToggle" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                        <svg id="sunIcon" class="hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                        </svg>
+                        <svg id="moonIcon" class="block dark:hidden text-gray-700" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                    </button>
+                    <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">AD</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <a href="/members" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5m7-7-7 7 7 7"/>
+                        </svg>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl"
+                             th:text="${member.firstName.substring(0,1) + member.lastName.substring(0,1)}">
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${member.fullName}">Member Name</h1>
+                            <p class="text-gray-600 dark:text-gray-400" th:text="${member.email}">member@email.com</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <a th:href="@{/members/{id}/edit(id=${member.id})}" class="btn-primary text-white px-4 py-2 rounded-lg font-medium">
+                        Edit Member
+                    </a>
+                    <form th:action="@{/members/{id}/delete(id=${member.id})}" method="post" class="inline"
+                          onsubmit="return confirm('Are you sure you want to delete this member?')">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Main Info -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Personal Information -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="mr-2 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Personal Information
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Full Name</label>
+                            <p class="text-gray-900 font-medium" th:text="${member.fullName}">John Doe</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Email</label>
+                            <p class="text-gray-900" th:text="${member.email}">john@example.com</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Phone</label>
+                            <p class="text-gray-900" th:text="${member.phone ?: 'Not provided'}">+1 234 567 8900</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Date of Birth</label>
+                            <p class="text-gray-900" th:text="${member.dateOfBirth != null ? #temporals.format(member.dateOfBirth, 'MMM dd, yyyy') : 'Not provided'}">Jan 15, 1990</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Gender</label>
+                            <p class="text-gray-900" th:text="${member.gender ?: 'Not specified'}">Male</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Member Since</label>
+                            <p class="text-gray-900" th:text="${#temporals.format(member.createdAt, 'MMM dd, yyyy')}">Jan 15, 2024</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" th:if="${!#strings.isEmpty(member.address) or !#strings.isEmpty(member.city) or !#strings.isEmpty(member.state) or !#strings.isEmpty(member.zipCode)}">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="mr-2 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        Address Information
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div th:if="${member.address}">
+                            <label class="text-sm font-medium text-gray-500">Address</label>
+                            <p class="text-gray-900" th:text="${member.address}">123 Main Street</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div th:if="${member.city}">
+                                <label class="text-sm font-medium text-gray-500">City</label>
+                                <p class="text-gray-900" th:text="${member.city}">New York</p>
+                            </div>
+                            <div th:if="${member.state}">
+                                <label class="text-sm font-medium text-gray-500">State</label>
+                                <p class="text-gray-900" th:text="${member.state}">NY</p>
+                            </div>
+                            <div th:if="${member.zipCode}">
+                                <label class="text-sm font-medium text-gray-500">ZIP Code</label>
+                                <p class="text-gray-900" th:text="${member.zipCode}">10001</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" th:if="${!#strings.isEmpty(member.emergencyContactName) or !#strings.isEmpty(member.emergencyContactPhone)}">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="mr-2 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        Emergency Contact
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div th:if="${member.emergencyContactName}">
+                            <label class="text-sm font-medium text-gray-500">Contact Name</label>
+                            <p class="text-gray-900" th:text="${member.emergencyContactName}">Jane Doe</p>
+                        </div>
+                        <div th:if="${member.emergencyContactPhone}">
+                            <label class="text-sm font-medium text-gray-500">Contact Phone</label>
+                            <p class="text-gray-900" th:text="${member.emergencyContactPhone}">+1 234 567 8901</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" th:if="${member.notes}">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="mr-2 text-blue-600" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" x2="8" y1="13" y2="13"/>
+                            <line x1="16" x2="8" y1="17" y2="17"/>
+                        </svg>
+                        Notes
+                    </h3>
+                    <p class="text-gray-700 whitespace-pre-wrap" th:text="${member.notes}">Member notes here...</p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                
+                <!-- Membership Status -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Membership Status</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-500">Status</span>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                                  th:classappend="${member.status.name() == 'ACTIVE' ? 'bg-green-100 text-green-800' : 
+                                                 member.status.name() == 'EXPIRED' ? 'bg-red-100 text-red-800' : 
+                                                 'bg-gray-100 text-gray-800'}"
+                                  th:text="${member.status}">
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-500">Type</span>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                                  th:classappend="${member.membershipType.name() == 'PREMIUM' ? 'bg-purple-100 text-purple-800' : 
+                                                 member.membershipType.name() == 'VIP' ? 'bg-yellow-100 text-yellow-800' : 
+                                                 'bg-blue-100 text-blue-800'}"
+                                  th:text="${member.membershipType}">
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-500">Start Date</span>
+                            <span class="text-sm text-gray-900" th:text="${member.membershipStartDate != null ? #temporals.format(member.membershipStartDate, 'MMM dd, yyyy') : 'Not set'}">Jan 15, 2024</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between" th:if="${member.membershipEndDate}">
+                            <span class="text-sm font-medium text-gray-500">End Date</span>
+                            <span class="text-sm text-gray-900" th:text="${#temporals.format(member.membershipEndDate, 'MMM dd, yyyy')}">Jan 15, 2025</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between" th:if="${member.monthlyFee}">
+                            <span class="text-sm font-medium text-gray-500">Monthly Fee</span>
+                            <span class="text-sm font-semibold text-gray-900" th:text="'$' + ${member.monthlyFee}">$99.99</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Stats -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Progress Stats</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-500">Sessions Completed</span>
+                                <span class="text-sm font-semibold text-gray-900" th:text="${member.completedSessions + '/' + member.totalSessions}">12/20</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" th:style="'width: ' + ${member.progressPercentage} + '%'"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1" th:text="${member.progressPercentage + '% complete'}">60% complete</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600" th:text="${member.completedSessions}">12</div>
+                                <div class="text-xs text-gray-500">Completed</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-400" th:text="${member.totalSessions - member.completedSessions}">8</div>
+                                <div class="text-xs text-gray-500">Remaining</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    
+                    <div class="space-y-3">
+                        <form th:action="@{/members/{id}/status(id=${member.id})}" method="post" class="w-full">
+                            <input type="hidden" name="status" th:value="${member.status.name() == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}">
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition">
+                                <span th:text="${member.status.name() == 'ACTIVE' ? 'Deactivate Member' : 'Activate Member'}">Toggle Status</span>
+                            </button>
+                        </form>
+                        
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition">
+                            Send Email
+                        </button>
+                        
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition">
+                            View Payment History
+                        </button>
+                        
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition">
+                            Schedule Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div th:if="${successMessage}" class="fixed top-4 right-4 z-50">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg" role="alert">
+            <span th:text="${successMessage}"></span>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="fixed top-4 right-4 z-50">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg" role="alert">
+            <span th:text="${errorMessage}"></span>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            htmlElement.classList.add('dark');
+        }
+        
+        // Toggle dark mode
+        darkModeToggle?.addEventListener('click', function() {
+            htmlElement.classList.toggle('dark');
+            
+            // Save preference
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('[role="alert"]');
+            messages.forEach(msg => msg.style.display = 'none');
+        }, 5000);
+    </script>
+</body>
+</html>

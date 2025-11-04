@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Trainer Form</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transition: all 0.3s ease; }
+        .btn-primary:hover { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                    <img src="/images/fithub-icon.svg" alt="FitHub" class="w-10 h-10">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">FitHub</span>
+                        <span class="text-xs text-gray-500 font-medium -mt-1">Premium Gym</span>
+                    </div>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Home</a>
+                    <a href="/members" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Members</a>
+                    <a href="/trainers" class="text-blue-600 dark:text-blue-400 font-semibold">Trainers</a>
+                    <a href="/classes" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition">Classes</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="darkModeToggle" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition">
+                        <svg id="sunIcon" class="hidden dark:block text-yellow-400" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                        </svg>
+                        <svg id="moonIcon" class="block dark:hidden text-gray-700" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                        </svg>
+                    </button>
+                    <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">AD</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center space-x-4">
+                <a href="/trainers" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5m7-7-7 7 7 7"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${isEdit ? 'Edit Trainer' : 'Add New Trainer'}">Add New Trainer</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Fill in the trainer information below</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <form th:action="${isEdit ? '/trainers/' + trainer.id + '/edit' : '/trainers/add'}" 
+              method="post" 
+              th:object="${trainer}"
+              class="space-y-6">
+            
+            <!-- Professional Information -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Professional Information</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div th:if="${not isEdit}">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select User</label>
+                        <select th:field="*{user.id}" required 
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select a user...</option>
+                            <option th:each="user : ${availableUsers}" 
+                                    th:value="${user.id}" 
+                                    th:text="${user.fullName + ' (' + user.email + ')'}">User Name</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Employee ID</label>
+                        <input type="text" th:field="*{employeeId}" 
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="EMP001">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Experience Years</label>
+                        <input type="number" th:field="*{experienceYears}" min="0" required
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="5">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Employment Type</label>
+                        <select th:field="*{employmentType}" required
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option th:each="type : ${employmentTypes}" 
+                                    th:value="${type}" 
+                                    th:text="${type}">Full Time</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hire Date</label>
+                        <input type="date" th:field="*{hireDate}"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                        <select th:field="*{status}" required
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                            <option value="ON_LEAVE">On Leave</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bio</label>
+                    <textarea th:field="*{bio}" rows="3"
+                              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                              placeholder="Tell us about the trainer..."></textarea>
+                </div>
+            </div>
+
+            <!-- Specializations -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Specializations</h3>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div th:each="spec : ${specializations}" class="flex items-center">
+                        <input type="checkbox" th:field="*{specializations}" th:value="${spec}" 
+                               class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label th:for="${#ids.prev('specializations')}" 
+                               class="ml-2 text-sm text-gray-700 dark:text-gray-300" 
+                               th:text="${spec.displayName}">Yoga</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compensation -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Compensation</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Monthly Salary ($)</label>
+                        <input type="number" th:field="*{monthlySalary}" step="0.01" min="0"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="5000.00">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hourly Rate ($)</label>
+                        <input type="number" th:field="*{hourlyRate}" step="0.01" min="0"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                               placeholder="50.00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Availability -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Weekly Availability</h3>
+                
+                <div class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Monday</span>
+                        <input type="time" th:field="*{mondayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{mondayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Tuesday</span>
+                        <input type="time" th:field="*{tuesdayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{tuesdayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Wednesday</span>
+                        <input type="time" th:field="*{wednesdayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{wednesdayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Thursday</span>
+                        <input type="time" th:field="*{thursdayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{thursdayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Friday</span>
+                        <input type="time" th:field="*{fridayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{fridayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Saturday</span>
+                        <input type="time" th:field="*{saturdayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{saturdayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+                        <span class="font-medium text-gray-700 dark:text-gray-300">Sunday</span>
+                        <input type="time" th:field="*{sundayStart}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                        <input type="time" th:field="*{sundayEnd}" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4">
+                <button type="submit" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold">
+                    <span th:text="${isEdit ? 'Update Trainer' : 'Add Trainer'}">Add Trainer</span>
+                </button>
+                <a href="/trainers" class="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white transition">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            htmlElement.classList.add('dark');
+        }
+        
+        // Toggle dark mode
+        darkModeToggle?.addEventListener('click', function() {
+            htmlElement.classList.toggle('dark');
+            
+            // Save preference
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+</body>
+</html>
